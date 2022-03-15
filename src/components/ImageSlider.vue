@@ -1,127 +1,148 @@
 <template>
-  <section class="bg-gray-900 flex justify-center items-center min-h-screen">
-    <!-- slider container -->
-    <div class="relative h-96 w-full max-w-4xl overflow-x-hidden">
-      <!-- slide 1 -->
-      <div
-        class="absolute top-0 w-full h-96 flex items-center justify-center transition-transform"
-        data-all
-      >
-        <img
-          class="w-full h-full object-cover"
-          src="//unsplash.it/2900"
-          alt=""
-        />
+  <div id="slider">
+    <transition-group tag="div" :name="transitionName" class="slides-group">
+      <div v-if="show" :key="current" class="slide" :class="slides[current].className">
+        <p>I'm {{slides[current].className}}!</p>
       </div>
-      <!-- slide 2 -->
-      <div
-        class="absolute top-0 w-full h-96 flex items-center justify-center transition-transform"
-        data-all
-      >
-        <img
-          class="w-full h-full object-cover"
-          src="//unsplash.it/1910"
-          alt=""
-        />
-      </div>
-      <!-- slide 3 -->
-      <div
-        class="absolute top-0 w-full h-96 flex items-center justify-center transition-transform"
-        data-all
-      >
-        <img
-          class="w-full h-full object-cover"
-          src="//unsplash.it/1400"
-          alt=""
-        />
-      </div>
-
-      <!-- buttons left and right  -->
-      <button
-        id="left"
-        class="absolute w-10 h-10 ml-2 md:ml-10 cursor-pointer font-bold text-black hover:text-white rounded-full bg-white hover:bg-blue-700 leading-tight text-center z-10 top-48 left-0 my-auto flex items-center justify-center"
-      >
-        <svg
-          class="w-6 h-6"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-            clip-rule="evenodd"
-          ></path>
-        </svg>
-      </button>
-      <button
-        id="right"
-        class="absolute w-10 h-10 mr-2 md:mr-10 cursor-pointer font-bold text-black hover:text-white rounded-full bg-white hover:bg-blue-700 leading-tight text-center z-10 top-48 right-0 my-auto flex items-center justify-center"
-      >
-        <svg
-          class="w-6 h-6"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-            clip-rule="evenodd"
-          ></path>
-        </svg>
-      </button>
+    </transition-group>
+    <div class="btn btn-prev" aria-label="Previous slide" @click="slide(-1)">
+      &#10094;
     </div>
-  </section>
+    <div class="btn btn-next" aria-label="Next slide" @click="slide(1)">
+      &#10095
+    </div>
+  </div>
+  <div>TODO add here https://codepen.io/letswrite/pen/pqPYrV</div>
 </template>
 
 <script>
 export default {
   name: "ImageSlider",
+  el: "#slider",
+  function: {
+    current: 0,
+    direction: 1,
+    transitionName: "fade",
+    show: false,
+    slides: [
+      { className: "blue" },
+      { className: "red" },
+      { className: "yellow" },
+    ],
+  },
+  methods: {
+    slide(dir) {
+      this.direction = dir;
+      dir === 1
+        ? (this.transitionName = "slide-next")
+        : (this.transitionName = "slide-prev");
+      var len = this.slides.length;
+      this.current = (this.current + (dir % len) + len) % len;
+    },
+  },
+  mounted() {
+    this.show = true;
+  },
 };
-
-const slides = document.querySelectorAll("[data-all]");
-const btnLeft = document.querySelector("#left");
-const btnRight = document.querySelector("#right");
-
-let currSlide = 0;
-const maxSlide = slides.length;
-
-const goToSlide = function (slide) {
-  slides.forEach(
-    (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%)`)
-  );
-};
-
-goToSlide(0);
-
-const nextSlide = function () {
-  if (currSlide === maxSlide - 1) {
-    currSlide = 0;
-  } else {
-    currSlide++;
-  }
-
-  goToSlide(currSlide);
-};
-
-btnRight.addEventListener("click", nextSlide);
-
-const prevSlide = function () {
-  if (currSlide === 0) {
-    currSlide = maxSlide - 1;
-  } else {
-    currSlide--;
-  }
-  goToSlide(currSlide);
-};
-btnLeft.addEventListener("click", prevSlide);
-
-document.addEventListener("keydown", function (e) {
-  if (e.key === "ArrowLeft") prevSlide();
-  e.key === "ArrowRight" && nextSlide();
-});
 </script>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css?family=Crimson+Text");
+
+/* FADE IN */
+.fade-enter-active {
+  transition: opacity 1s;
+}
+.fade-enter {
+  opacity: 0;
+}
+
+/* GO TO NEXT SLIDE */
+.slide-next-enter-active,
+.slide-next-leave-active {
+  transition: transform 0.5s ease-in-out;
+}
+.slide-next-enter {
+  transform: translate(100%);
+}
+.slide-next-leave-to {
+  transform: translate(-100%);
+}
+
+/* GO TO PREVIOUS SLIDE */
+.slide-prev-enter-active,
+.slide-prev-leave-active {
+  transition: transform 0.5s ease-in-out;
+}
+.slide-prev-enter {
+  transform: translate(-100%);
+}
+.slide-prev-leave-to {
+  transform: translate(100%);
+}
+
+/* SLIDES CLASSES */
+
+.blue {
+  background: #4a69bd;
+}
+
+.red {
+  background: #e55039;
+}
+
+.yellow {
+  background: #f6b93b;
+}
+
+/* SLIDER STYLES */
+body {
+  overflow: hidden;
+  margin: 0;
+  font-size: 50px;
+  font-family: "Crimson Text", sans-serif;
+  color: #fff;
+}
+
+#slider {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+}
+
+.slide {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn {
+  z-index: 10;
+  cursor: pointer;
+  border: 3px solid #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70px;
+  height: 70px;
+  position: absolute;
+  top: calc(50% - 35px);
+  left: 1%;
+  transition: transform 0.3s ease-in-out;
+  user-select: none;
+}
+
+.btn-next {
+  left: auto;
+  right: 1%;
+}
+
+.btn:hover {
+  transform: scale(1.1);
+}
 </style>

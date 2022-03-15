@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto">
-    <Blog />
     <ImageSlider />
+    <Blog />
   </div>
 </template>
 
