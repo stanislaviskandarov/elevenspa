@@ -1,11 +1,15 @@
 <template>
   <div id="app">
-    <HelloWorld msg="Hello Vue3 + Tailwind" />
+    <Navbar />
+    <HomePage />
+    <Footer />
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld";
+import HomePage from "./components/HomePage";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 export default {
   name: "App",
@@ -13,7 +17,9 @@ export default {
     return {};
   },
   components: {
-    HelloWorld,
+    HomePage,
+    Navbar,
+    Footer,
   },
 };
 </script>
